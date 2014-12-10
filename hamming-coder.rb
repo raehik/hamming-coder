@@ -12,7 +12,7 @@ class HammingCoder
 #        
 
   def is_power_of_2(num)
-    if (num).to_s(2).scan(/1/).size == 1
+    if num.to_s(2).scan(/1/).size == 1
       return true
     else
       return false
@@ -35,6 +35,7 @@ class HammingCoder
   end
 
   def encode(data)
+    data.reverse!
     # insert parity bits ('placeholders')
     offset = 0
     # since the data array gets bigger every time we insert a parity
@@ -45,20 +46,13 @@ class HammingCoder
       data, offset = loop(data, offset)
     end
 
-    # temporary print
-    #for element in data
-    #  print element
-    #end
-    #puts
-
     # set parity bits
     for i in 0..data.length
       if (is_power_of_2(i+1) && i != data.length) || i == 0
         positions = positions(i+1, data.length)
         parity = 0
-        for position in positions
-          #puts "position - 1: #{position-1}"
-          parity += data[position-1]
+        for pos in positions
+          parity += data[pos-1]
         end
         if parity % 2 == 0
           data[i] = 0
@@ -68,7 +62,7 @@ class HammingCoder
       end
     end
 
-    return data
+    return data.reverse
   end
 
   def positions(num, max)
@@ -87,9 +81,19 @@ class HammingCoder
   end
 end
 
-data = [1, 0, 1, 1, 0, 0, 1, 1]
+#data = [1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 1]
+data = [0, 1, 0, 1]
+
+for bit in data
+  print bit
+end
+print " -> "
 
 hamming = HammingCoder.new
 
-print hamming.encode(data)
+encoded = hamming.encode(data)
+
+for bit in encoded
+  print bit
+end
 puts
